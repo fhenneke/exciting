@@ -113,7 +113,7 @@ Subroutine xsinit
          Write (unitout,*)
          Write (100, '("Warning(xsinit): xs-part not working for spin-polari&
         &zed systems.")')
-         Call terminate
+!         Call terminate
       End If
   ! no spin-spirals
       If (isspinspiral()) Then

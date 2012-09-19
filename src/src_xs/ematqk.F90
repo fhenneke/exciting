@@ -105,8 +105,8 @@ Subroutine ematqk (iq, ik)
       evecfvo20 (:, :) = evecfv0 (1:ngk0(1, ik), istl1:istu1, 1)
   ! change back file extension
 !
-      Call getapwcmt (0, ik, 1, nstfv, input%xs%lmaxapwwf, apwcmt0)
-      Call getapwcmt (iq, ikq, 1, nstfv, input%xs%lmaxapwwf, apwcmt)
+!      Call getapwcmt (0, ik, 1, nstfv, input%xs%lmaxapwwf, apwcmt0)
+!      Call getapwcmt (iq, ikq, 1, nstfv, input%xs%lmaxapwwf, apwcmt)
       Call getlocmt (0, ik, 1, nstfv, locmt0)
       Call getlocmt (iq, ikq, 1, nstfv, locmt)
 !
