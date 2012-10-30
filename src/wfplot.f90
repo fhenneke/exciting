@@ -14,7 +14,7 @@ Subroutine wfplot(dostm)
     Implicit None
     Logical, Intent(in) :: dostm
     ! local variables
-    Integer :: ik, ist
+    Integer :: ik, ist, stmmode, stmtype
     Real (8) :: x, y, t1, bias
     type(plotlabels),pointer ::labels
     ! allocatable arrays
@@ -69,24 +69,44 @@ Subroutine wfplot(dostm)
         occsv (:, :) = 0.d0
         occsv (ist, ik) = 1.d0
     Else
+        Select Case (trim(input%properties%STM%stmtype))
+            Case ('differentialConductance')
+                stmtype=1
+            Case ('integratedLDOS')
+                stmtype=2
+        End Select
+        Select Case (trim(input%properties%STM%stmmode))
+            Case ('constantHeight')
+                stmmode=1
+            Case ('topographic')
+                stmmode=2
+        End Select
+
         bias = input%properties%STM%bias
-        If (bias .Eq. 0.d0) Then
-            ! plotting an STM image by setting occupancies to be a delta function at the
-            ! Fermi energy
+
+        If ( stmtype .Eq. 1 .And. stmmode .Eq. 1) Then
+            Write(*,*)
+            Write (*, '("Info(wfplot):")')
+            Write (*, '("Generating constant-height STM image of the differential conductance.")')
+            ! plotting an STM differential-conductance image by setting occupancies to be a
+            ! delta function at the Fermi energy
             t1 = 1.d0 / input%groundstate%swidth
             Do ik = 1, nkpt
                 ! get the eigenvalues from file
                 Call getevalsv (vkl(:, ik), evalsv(:, ik))
                 Do ist = 1, nstsv
-                    x = (efermi-evalsv(ist, ik)) * t1
+                    x = ((efermi-bias)-evalsv(ist, ik)) * t1
                     occsv (ist, ik) = occmax * wkpt (ik) * sdelta &
                         & (input%groundstate%stypenumber, x) * t1
                 End Do
             End Do
-        Else
+        Else If ( stmtype .Eq. 2 .And. stmmode .Eq. 1) Then
            ! Plots the local density of states integrated between Ef y Ef + bias for positive bias or
            ! between Ef-bias and Ef for negative bias. This way simple STM plot in the Tersoff-Hamann
            ! aproximation can be obtained (PRB 31,805 (1985)).
+            Write(*,*)
+            Write (*, '("Info(wfplot):")')
+            Write (*, '("Generating constant-height STM image of the integrated LDOS.")')
             t1 = 1.d0 / input%groundstate%swidth
             Do ik = 1, nkpt
                 Call getevalsv (vkl(:, ik), evalsv(:, ik))
@@ -98,6 +118,11 @@ Subroutine wfplot(dostm)
                         & stheta(input%groundstate%stypenumber, y)
                 End Do
             End Do
+        Else
+            Write (100, '("Warning(wfplot): STM still not implemented for direct topographic plot.")')
+            Write (100, '("For topographic plot generation consider to make a series &
+            constant-height calculations at different heights and postprocess the &
+               output to find the iso-surface. ")')
         End If
     End If
     ! set the charge density to zero
@@ -169,9 +194,18 @@ Subroutine wfplot(dostm)
         Call plot2d (labels, 1, input%groundstate%lmaxvr, lmmaxvr, &
             & rhomt, rhoir, input%properties%STM%plot2d)
         call destroy_plotlablels(labels)
-        Write (*,*)
-        Write (*, '("Info(wfplot):")')
-        Write (*, '(" 2D STM image written to STM2d2D.xml")')
+        If ( stmmode .Eq. 2) Then
+            Write (*,*)
+            Write (*, '("Info(wfplot):")')
+            Write (*, '("STM still not implemented for direct topographic plot.")')
+            Write (*, '("For topographic plot generation consider to make a series &
+            constant-height calculations at different heights and postprocess the &
+               output to find the iso-surface. ")')
+        Else
+            Write (*,*)
+            Write (*, '("Info(wfplot):")')
+            Write (*, '(" 2D STM image written to STM2d2D.xml")')
+        End If
     End If
     If ( .Not. dostm) Then
         Write (*, '(" for k-point ", I6, " and state ", I6)') &
