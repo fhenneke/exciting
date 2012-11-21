@@ -5,10 +5,22 @@
 ! This file is distributed under the terms of the GNU General Public License.
 ! See the file COPYING for license details.
 !
+!BOP
+! !ROUTINE: dielectric
+! !INTERFACE:
+!
 !
 Subroutine dielectric
       Use modmain
       Use modinput
+! !DESCRIPTION:
+!   Calculation of the optical conductivity tensor. The implementation
+!   follows Eq.(1) from Physica Scripta Vol. T109, 170-174, 2004.
+!
+! !REVISION HISTORY:
+!   Added description Nov 2012 (Rigamonti)
+!EOP
+!BOC
       Implicit None
 ! local variables
       Integer :: ik, jk, isym
