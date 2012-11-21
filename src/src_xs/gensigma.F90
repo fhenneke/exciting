@@ -5,6 +5,11 @@
 ! This file is distributed under the terms of the GNU General Public License.
 ! See the file COPYING for license details.
 !
+!BOP
+! !ROUTINE: df
+! !INTERFACE:
+!
+!
 Module m_gensigma
       Implicit None
 Contains
@@ -13,6 +18,13 @@ Contains
       Subroutine gensigma (w, eps, oc, sigma)
          Use mod_constants, Only: pi, zi
          Use modxs
+! !DESCRIPTION:
+!   Calculation of conductivity tensor (sigma) follows Eq.1 from
+!   PRB 86, 125139 (2012)
+! !REVISION HISTORY:
+!   Added description Nov 2012 (Rigamonti)
+!EOP
+!BOC
          Implicit None
     ! arguments
          Real (8), Intent (In) :: w (:)
