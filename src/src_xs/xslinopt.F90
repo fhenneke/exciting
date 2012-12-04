@@ -55,8 +55,10 @@ Subroutine xslinopt (iq)
   ! generate energy grids
       brd = 0.d0
       If (input%xs%tddft%acont) brd = input%xs%broad
+  ! w(j) = i*[d*(j-1) + intv(1)], d=[intv(2)-intv(1)]/n, j=1,n, w(n)=intv(2)-d
       Call genwgrid (nwdf, input%xs%energywindow%intv, &
      & input%xs%tddft%acont, 0.d0, w_cmplx=w)
+  ! wr(j) = d*(j-1) + intv(1) + i*brd, d=[intv(2)-intv(1)]/n, j=1,n, w(n)=intv(2)-d + i*brd
       Call genwgrid (input%xs%energywindow%points, &
      & input%xs%energywindow%intv, .False., brd, w_cmplx=wr)
       wplot = dble (wr)
