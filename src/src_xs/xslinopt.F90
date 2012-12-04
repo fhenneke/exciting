@@ -6,7 +6,11 @@
 ! See the file COPYING for license details.
 !
 !
+!BOP
+! !ROUTINE: genwgrid
+! !INTERFACE:
 Subroutine xslinopt (iq)
+! !USES:
       Use modmain
       Use modinput
       Use modxs
@@ -24,6 +28,16 @@ Subroutine xslinopt (iq)
       Use m_getunit
       Use m_genfilname
       Implicit None
+! !DESCRIPTION:
+!   The number of calculated tensorial components of the dielectric function (df)
+!   depends on whether q=0 or q!=0. For q=0, all nine components are calculated
+!   (if input%xs%dfoffdiag=True, otherwise only the diagonal components), while
+!   for q!=0 only the xx component is calculated (irrespective of the value of
+!   input%xs%dfoffdiag)
+! !REVISION HISTORY:
+!   Description Dec 2012 (S. Rigamonti)
+!EOP
+!BOC
   ! arguments
       Integer, Intent (In) :: iq
   ! local variables
@@ -55,8 +69,10 @@ Subroutine xslinopt (iq)
   ! generate energy grids
       brd = 0.d0
       If (input%xs%tddft%acont) brd = input%xs%broad
+  ! w(j) = i*[d*(j-1) + intv(1)], d=[intv(2)-intv(1)]/n, j=1,n, w(n)=intv(2)-d
       Call genwgrid (nwdf, input%xs%energywindow%intv, &
      & input%xs%tddft%acont, 0.d0, w_cmplx=w)
+  ! wr(j) = d*(j-1) + intv(1) + i*brd, d=[intv(2)-intv(1)]/n, j=1,n, w(n)=intv(2)-d + i*brd
       Call genwgrid (input%xs%energywindow%points, &
      & input%xs%energywindow%intv, .False., brd, w_cmplx=wr)
       wplot = dble (wr)
