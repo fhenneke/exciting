@@ -29,7 +29,7 @@ Subroutine xslinopt (iq)
       Use m_genfilname
       Implicit None
 ! !DESCRIPTION:
-!   The number of calculated tensorial components of the dielectric function (df)
+!   The number of read tensorial components of the dielectric function (df)
 !   depends on whether q=0 or q!=0. For q=0, all nine components are calculated
 !   (if input%xs%dfoffdiag=True, otherwise only the diagonal components), while
 !   for q!=0 only the xx component is calculated (irrespective of the value of
@@ -44,7 +44,7 @@ Subroutine xslinopt (iq)
       Character (*), Parameter :: thisnam = 'xslinopt'
       Character (256) :: filnam
       Complex (8), Allocatable :: mdf (:), mdf1 (:), mdf2 (:, :, :), w &
-     & (:), wr (:), sigma (:)
+     & (:), wr (:), sigma (:), moke(:)
       Real (8), Allocatable :: wplot (:), loss (:)
       Real (8), Allocatable :: eps1 (:), eps2 (:), cf (:, :)
       Real (8) :: sumrls (3), brd
@@ -61,8 +61,8 @@ Subroutine xslinopt (iq)
       Allocate (mdf1(nwdf), mdf2(3, 3, input%xs%energywindow%points), w(nwdf), &
      & wr(input%xs%energywindow%points), wplot(input%xs%energywindow%points), &
      & mdf(input%xs%energywindow%points), loss(input%xs%energywindow%points), &
-     & sigma(input%xs%energywindow%points), cf(3, &
-     & input%xs%energywindow%points))
+     & sigma(input%xs%energywindow%points), moke(2, input%xs%energywindow%points), &
+     &  cf(3, input%xs%energywindow%points))
       Allocate (eps1(input%xs%energywindow%points), &
      & eps2(input%xs%energywindow%points))
       mdf2 (:, :, :) = zzero
@@ -152,20 +152,28 @@ Subroutine xslinopt (iq)
               & input%xs%tddft%aresdf, tord=input%xs%tddft%torddf, nlf=(m == 1), &
               & fxctypestr=input%xs%tddft%fxctype, tq0=tq0, &
               & oc1=oct1, oc2=oct2, iqmt=iq, filnam=fnsumrules)
+                if (tq0) Call genfilname (basename='MOKE', asc=.False., &
+              & bzsampl=bzsampl, acont=input%xs%tddft%acont, nar= .Not. &
+              & input%xs%tddft%aresdf, tord=input%xs%tddft%torddf, nlf=(m == 1), &
+              & fxctypestr=input%xs%tddft%fxctype, tq0=tq0, &
+              & oc1=oct1, oc2=oct2, iqmt=iq, filnam=fnsigma)
+
            ! generate optical functions
                Call genloss (mdf, loss)
                Call gensigma (wplot, mdf, optcompt, sigma)
                Call gensumrls (wplot, mdf, sumrls)
+               if (tq0) Call genmoke (mdf, loss)
            ! write optical functions to file
                Call writeeps (iq, oct1, oct2, wplot, mdf, trim(fneps))
                Call writeloss (iq, wplot, loss, trim(fnloss))
                Call writesigma (iq, wplot, sigma, trim(fnsigma))
                if (tq0) Call writesumrls (iq, sumrls, trim(fnsumrules))
+               if (tq0) Call writemoke (iq, wplot, sigma, trim(fnsigma))
            ! end loop over optical components
             End Do
          End Do
       End Do ! m
   ! deallocate
-      Deallocate (mdf, mdf1, mdf2, w, wr, wplot, loss, sigma)
+      Deallocate (mdf, mdf1, mdf2, w, wr, wplot, loss, sigma,moke)
       Deallocate (eps1, eps2, cf)
 End Subroutine xslinopt
