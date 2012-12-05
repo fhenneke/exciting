@@ -46,7 +46,7 @@ Subroutine xslinopt (iq)
       Complex (8), Allocatable :: mdf (:), mdf1 (:), mdf2 (:, :, :), w &
      & (:), wr (:), sigma (:), moke(:)
       Real (8), Allocatable :: wplot (:), loss (:)
-      Real (8), Allocatable :: eps1 (:), eps2 (:), cf (:, :)
+      Real (8), Allocatable :: eps1 (:), eps2 (:)
       Real (8) :: sumrls (3), brd
       Integer :: n, m, recl, iw, nc, oct1, oct2, octl, &
      & octu, optcompt (3)
@@ -61,8 +61,7 @@ Subroutine xslinopt (iq)
       Allocate (mdf1(nwdf), mdf2(3, 3, input%xs%energywindow%points), w(nwdf), &
      & wr(input%xs%energywindow%points), wplot(input%xs%energywindow%points), &
      & mdf(input%xs%energywindow%points), loss(input%xs%energywindow%points), &
-     & sigma(input%xs%energywindow%points), moke(2, input%xs%energywindow%points), &
-     &  cf(3, input%xs%energywindow%points))
+     & sigma(input%xs%energywindow%points), moke(2, input%xs%energywindow%points))
       Allocate (eps1(input%xs%energywindow%points), &
      & eps2(input%xs%energywindow%points))
       mdf2 (:, :, :) = zzero
@@ -175,5 +174,5 @@ Subroutine xslinopt (iq)
       End Do ! m
   ! deallocate
       Deallocate (mdf, mdf1, mdf2, w, wr, wplot, loss, sigma,moke)
-      Deallocate (eps1, eps2, cf)
+      Deallocate (eps1, eps2)
 End Subroutine xslinopt
