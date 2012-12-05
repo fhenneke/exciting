@@ -75,13 +75,16 @@ Subroutine xslinopt (iq)
   ! wr(j) = d*(j-1) + intv(1) + i*brd, d=[intv(2)-intv(1)]/n, j=1,n, w(n)=intv(2)-d + i*brd
       Call genwgrid (input%xs%energywindow%points, &
      & input%xs%energywindow%intv, .False., brd, w_cmplx=wr)
+  ! w = i*wr + brd
       wplot = dble (wr)
   ! record length
       Inquire (IoLength=Recl) mdf1 (1)
       Call getunit (unit1)
   ! neglect/include local field effects
       Do m = 1, n, Max (n-1, 1)
-     ! loop over longitudinal components for optics
+     ! loop over longitudinal components for optics.
+     ! For each tensorial component read file containing the inverse dielectric function
+     ! previously calculated. Fill mdf2 matrix.
          Do oct1 = 1, nc
             If (input%xs%dfoffdiag) Then
                octl = 1
@@ -115,6 +118,7 @@ Subroutine xslinopt (iq)
                mdf2 (oct1, oct2, :) = mdf (:)
             End Do
          End Do
+     ! loop again over longitudinal components for optics.
          Do oct1 = 1, nc
             If (input%xs%dfoffdiag) Then
                octl = 1
