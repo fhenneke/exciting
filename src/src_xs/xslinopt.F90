@@ -7,7 +7,7 @@
 !
 !
 !BOP
-! !ROUTINE: genwgrid
+! !ROUTINE: xslinopt
 ! !INTERFACE:
 Subroutine xslinopt (iq)
 ! !USES:
@@ -20,10 +20,12 @@ Subroutine xslinopt (iq)
       Use m_pade
       Use m_genloss
       Use m_gensigma
+      Use m_genmoke
       Use m_gensumrls
       Use m_writeeps
       Use m_writeloss
       Use m_writesigma
+      Use m_writemoke
       Use m_writesumrls
       Use m_getunit
       Use m_genfilname
@@ -66,7 +68,7 @@ Subroutine xslinopt (iq)
       Character (*), Parameter :: thisnam = 'xslinopt'
       Character (256) :: filnam
       Complex (8), Allocatable :: mdf (:), mdf1 (:), mdf2 (:, :, :), w &
-     & (:), wr (:), sigma (:), moke(:)
+     & (:), wr (:), sigma (:), sigma2 (:, :, :),moke(:)
       Real (8), Allocatable :: wplot (:), loss (:)
       Real (8) :: sumrls (3), brd
       Integer :: n, m, recl, iw, nc, oct1, oct2, octl, &
@@ -82,8 +84,10 @@ Subroutine xslinopt (iq)
       Allocate (mdf1(nwdf), mdf2(3, 3, input%xs%energywindow%points), w(nwdf), &
      & wr(input%xs%energywindow%points), wplot(input%xs%energywindow%points), &
      & mdf(input%xs%energywindow%points), loss(input%xs%energywindow%points), &
-     & sigma(input%xs%energywindow%points), moke(2, input%xs%energywindow%points))
+     & sigma(input%xs%energywindow%points), sigma2(3, 3, input%xs%energywindow%points), &
+     & moke(input%xs%energywindow%points))
       mdf2 (:, :, :) = zzero
+      sigma2 (:, :, :) = zzero
   ! generate energy grids
       brd = 0.d0
       If (input%xs%tddft%acont) brd = input%xs%broad
@@ -177,6 +181,7 @@ Subroutine xslinopt (iq)
            ! generate optical functions
                Call genloss (mdf, loss)
                Call gensigma (wplot, mdf, optcompt, sigma)
+               sigma2 (oct1, oct2, :) = sigma (:)
                Call gensumrls (wplot, mdf, sumrls)
            ! write optical functions to file
                Call writeeps (iq, oct1, oct2, wplot, mdf, trim(fneps))
@@ -191,10 +196,10 @@ Subroutine xslinopt (iq)
             & bzsampl=bzsampl, acont=input%xs%tddft%acont, nar= .Not. &
             & input%xs%tddft%aresdf, tord=input%xs%tddft%torddf, nlf=(m == 1), &
             & fxctypestr=input%xs%tddft%fxctype, tq0=tq0, iqmt=iq, filnam=fnmoke)
-            Call genmoke (sigma, moke)
+            Call genmoke (input%xs%energywindow%points,wplot,sigma2, moke)
             Call writemoke (iq, wplot, moke, trim(fnmoke))
         End If
       End Do ! m
   ! deallocate
-      Deallocate (mdf, mdf1, mdf2, w, wr, wplot, loss, sigma,moke)
+      Deallocate (mdf, mdf1, mdf2, w, wr, wplot, loss, sigma, sigma2, moke)
 End Subroutine xslinopt
