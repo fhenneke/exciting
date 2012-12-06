@@ -35,21 +35,27 @@ Subroutine xslinopt (iq)
 !   3- If analytic continuation used, calculate it through pade aproximants.
 !   4- symmetrize the macroscopic dielectric function tensor (for optics, i.e. q=0)
 !      in order to force the idf to have the exact symmetries of the crystal.
-!   5-
-!   This subroutine reads the inverse dielectric function from file.
+!   5- Generate output file names.
+!   6- Calling to subroutines for calculating optical properties.
+!   7- Writes calculated properties to files.
+!
+!   More technical details for each of the above steps:
+!   1- Two discrete frequency grids are generated, one of them is on the real axis
+!   with a constant small imaginary component added to each point (called wr
+!   internally), and the other is purely imaginary (called w internally).
+!   2- This subroutine reads the inverse dielectric function from file.
 !   The number of tensorial components of the inverse dielectric function (idf)
 !   that are read from file,
 !   depends on whether q=0 or q!=0. For q=0, all nine components are read
 !   (if input%xs%dfoffdiag=True, otherwise only the diagonal components), while
 !   for q!=0 only the xx component is read (irrespective of the value of
 !   input%xs%dfoffdiag).
-!   Two discrete frequency grids are generated, one of them is on the real axis
-!   with a constant small imaginary component added to each point (called wr
-!   internally), and the other is purely imaginary (called w internally).
-!   If the read values of the idf come from the evaluation on imaginary
+!   3- If the read values of the idf come from the evaluation on imaginary
 !   frequencies, then these w and wr are used to call the pade soubrutine
 !   to generate the values of the idf in the real wr grid by analytic
 !   continuation. Otherwise
+!   6- Calculated properties are: Loss function, Conductivity, sum rules for optic,
+!   moke effect for optic.
 ! !REVISION HISTORY:
 !   Description Dec 2012 (S. Rigamonti)
 !EOP
@@ -62,7 +68,6 @@ Subroutine xslinopt (iq)
       Complex (8), Allocatable :: mdf (:), mdf1 (:), mdf2 (:, :, :), w &
      & (:), wr (:), sigma (:), moke(:)
       Real (8), Allocatable :: wplot (:), loss (:)
-      Real (8), Allocatable :: eps1 (:), eps2 (:)
       Real (8) :: sumrls (3), brd
       Integer :: n, m, recl, iw, nc, oct1, oct2, octl, &
      & octu, optcompt (3)
@@ -78,8 +83,6 @@ Subroutine xslinopt (iq)
      & wr(input%xs%energywindow%points), wplot(input%xs%energywindow%points), &
      & mdf(input%xs%energywindow%points), loss(input%xs%energywindow%points), &
      & sigma(input%xs%energywindow%points), moke(2, input%xs%energywindow%points))
-      Allocate (eps1(input%xs%energywindow%points), &
-     & eps2(input%xs%energywindow%points))
       mdf2 (:, :, :) = zzero
   ! generate energy grids
       brd = 0.d0
@@ -194,5 +197,4 @@ Subroutine xslinopt (iq)
       End Do ! m
   ! deallocate
       Deallocate (mdf, mdf1, mdf2, w, wr, wplot, loss, sigma,moke)
-      Deallocate (eps1, eps2)
 End Subroutine xslinopt
