@@ -13,7 +13,7 @@ Subroutine writesymt2
 ! !DESCRIPTION:
 !   Outputs the symmetrization matrices for the tensor components of a rank-2
 !   tensor. The tensor(-field) $t_{ij}$ in reciprocal space must be invariant under
-!   coordinate transforms of the system wrt. the rotational part of the crystal
+!   coordinate transforms of the system with respect to the rotational part of the crystal
 !   symmetries, so we can average:
 !   $$ t_{ij}^{\rm sym} = \frac{1}{N_{\alpha}}\sum_{\alpha} \sum_{k,l}
 !     \alpha_{ik}\alpha_{jl}t_{kl}. $$

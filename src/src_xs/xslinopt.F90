@@ -29,11 +29,27 @@ Subroutine xslinopt (iq)
       Use m_genfilname
       Implicit None
 ! !DESCRIPTION:
-!   The number of read tensorial components of the dielectric function (df)
-!   depends on whether q=0 or q!=0. For q=0, all nine components are calculated
+!   Steps:
+!   1- generation of real and imaginary discrete frequency grids
+!   2- Reading of inverse dielectric function file for every tensorial component.
+!   3- If analytic continuation used, calculate it through pade aproximants.
+!   4- symmetrize the macroscopic dielectric function tensor (for optics, i.e. q=0)
+!      in order to force the idf to have the exact symmetries of the crystal.
+!   5-
+!   This subroutine reads the inverse dielectric function from file.
+!   The number of tensorial components of the inverse dielectric function (idf)
+!   that are read from file,
+!   depends on whether q=0 or q!=0. For q=0, all nine components are read
 !   (if input%xs%dfoffdiag=True, otherwise only the diagonal components), while
-!   for q!=0 only the xx component is calculated (irrespective of the value of
-!   input%xs%dfoffdiag)
+!   for q!=0 only the xx component is read (irrespective of the value of
+!   input%xs%dfoffdiag).
+!   Two discrete frequency grids are generated, one of them is on the real axis
+!   with a constant small imaginary component added to each point (called wr
+!   internally), and the other is purely imaginary (called w internally).
+!   If the read values of the idf come from the evaluation on imaginary
+!   frequencies, then these w and wr are used to call the pade soubrutine
+!   to generate the values of the idf in the real wr grid by analytic
+!   continuation. Otherwise
 ! !REVISION HISTORY:
 !   Description Dec 2012 (S. Rigamonti)
 !EOP
@@ -82,7 +98,7 @@ Subroutine xslinopt (iq)
   ! neglect/include local field effects
       Do m = 1, n, Max (n-1, 1)
      ! loop over longitudinal components for optics.
-     ! For each tensorial component read file containing the inverse dielectric function
+     ! For each tensorial component, read file containing the inverse dielectric function
      ! previously calculated. Fill mdf2 matrix.
          Do oct1 = 1, nc
             If (input%xs%dfoffdiag) Then
@@ -128,7 +144,10 @@ Subroutine xslinopt (iq)
             End If
             Do oct2 = octl, octu
                optcompt (:) = (/ oct1, oct2, 0 /)
-           ! symmetrize the macroscopic dielectric function tensor
+           ! symmetrize the macroscopic dielectric function tensor.
+           ! This forces the dielectric tensor to have the symmetries of the crystal.
+           ! Note: This symmetrization is not related to the one described in
+           ! chapter 8.3 of S.Sagmeister thesis.
                if (tq0) Call symt2app (oct1, oct2, nwdf, symt2, mdf2, mdf)
            ! file names for spectra
                Call genfilname (basename='EPSILON', asc=.False., &
@@ -151,26 +170,27 @@ Subroutine xslinopt (iq)
               & input%xs%tddft%aresdf, tord=input%xs%tddft%torddf, nlf=(m == 1), &
               & fxctypestr=input%xs%tddft%fxctype, tq0=tq0, &
               & oc1=oct1, oc2=oct2, iqmt=iq, filnam=fnsumrules)
-                if (tq0) Call genfilname (basename='MOKE', asc=.False., &
-              & bzsampl=bzsampl, acont=input%xs%tddft%acont, nar= .Not. &
-              & input%xs%tddft%aresdf, tord=input%xs%tddft%torddf, nlf=(m == 1), &
-              & fxctypestr=input%xs%tddft%fxctype, tq0=tq0, &
-              & oc1=oct1, oc2=oct2, iqmt=iq, filnam=fnsigma)
 
            ! generate optical functions
                Call genloss (mdf, loss)
                Call gensigma (wplot, mdf, optcompt, sigma)
                Call gensumrls (wplot, mdf, sumrls)
-               if (tq0) Call genmoke (mdf, loss)
            ! write optical functions to file
                Call writeeps (iq, oct1, oct2, wplot, mdf, trim(fneps))
                Call writeloss (iq, wplot, loss, trim(fnloss))
                Call writesigma (iq, wplot, sigma, trim(fnsigma))
                if (tq0) Call writesumrls (iq, sumrls, trim(fnsumrules))
-               if (tq0) Call writemoke (iq, wplot, sigma, trim(fnsigma))
            ! end loop over optical components
             End Do
          End Do
+        If (tq0) Then
+            Call genfilname (basename='MOKE', asc=.False., &
+            & bzsampl=bzsampl, acont=input%xs%tddft%acont, nar= .Not. &
+            & input%xs%tddft%aresdf, tord=input%xs%tddft%torddf, nlf=(m == 1), &
+            & fxctypestr=input%xs%tddft%fxctype, tq0=tq0, iqmt=iq, filnam=fnmoke)
+            Call genmoke (sigma, moke)
+            Call writemoke (iq, wplot, moke, trim(fnmoke))
+        End If
       End Do ! m
   ! deallocate
       Deallocate (mdf, mdf1, mdf2, w, wr, wplot, loss, sigma,moke)
