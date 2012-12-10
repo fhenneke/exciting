@@ -351,6 +351,8 @@ Module modxs
       Character (256) :: fnsigma
   ! sumrules for optics
       Character (256) :: fnsumrules
+  ! moke parameters
+      Character (256) :: fnmoke
 
   !--------------------------!
   !     backup variables     !

@@ -129,6 +129,7 @@ Subroutine propertylauncher
          Call dielectric
       End If
       If (associated(input%properties%moke) .And. rank .Eq. 0) Then
+         write(*,*) "Estoy en moke loco!"
          call rereadinput
          ! set the default values if dos element not present
          if (.not.associated(input%properties%dos)) &
