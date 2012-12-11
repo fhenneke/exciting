@@ -30,6 +30,7 @@ Subroutine ematqk (iq, ik)
   ! local variables
       Character (*), Parameter :: thisnam = 'ematqk'
   ! allocatable arrays
+      Complex (8), Allocatable :: evecsvk (:, :)
       Complex (8), Allocatable :: evecfvo0 (:, :)
       Complex (8), Allocatable :: evecfvu (:, :)
       Complex (8), Allocatable :: evecfvo20 (:, :)
@@ -74,6 +75,7 @@ Subroutine ematqk (iq, ik)
       If (allocated(xiuhloa)) deallocate (xiuhloa)
       Allocate (xiuhloa(nlotot, nst2))
   ! allocate temporary arrays
+      Allocate (evecsvk(nstsv, nstsv))
       Allocate (evecfvo0(nlotot, nst1))
       Allocate (evecfvu(nlotot, nst2))
       Allocate (evecfvo20(n0, nst1))
@@ -88,6 +90,7 @@ Subroutine ematqk (iq, ik)
 !
   ! read eigenvectors, eigenvalues and occupancies for G+k+q
       Call getevecfv (vkl(1, ikq), vgkl(1, 1, 1, ikq), evecfv)
+      Call getevecsv (vkl(1, ikq), evecsvk)
       Call getevalsv (vkl(1, ikq), evalsv(1, ikq))
   ! read occupation numbers for G+k+q
       Call getoccsv (vkl(1, ikq), occsv(1, ikq))
@@ -110,9 +113,9 @@ Subroutine ematqk (iq, ik)
 !      Call getlocmt (0, ik, 1, nstfv, locmt0)
 !      Call getlocmt (iq, ikq, 1, nstfv, locmt)
       Write (unitout,'("first call to getlocmt")')
-      Call getlocmt (0, ik, 1, nstfv, locmt0)
+      Call getlocmt (0, ik, 1, nstsv, locmt0)
       Write (unitout,'("second call to getlocmt")')
-      Call getlocmt (iq, ikq, 1, nstfv, locmt)
+      Call getlocmt (iq, ikq, 1, nstsv, locmt)
 !
       Call cpu_time (cpu0)
       cpuread = cpu0 - cpu1
