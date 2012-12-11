@@ -107,7 +107,11 @@ Subroutine ematqk (iq, ik)
 !
 !      Call getapwcmt (0, ik, 1, nstfv, input%xs%lmaxapwwf, apwcmt0)
 !      Call getapwcmt (iq, ikq, 1, nstfv, input%xs%lmaxapwwf, apwcmt)
+!      Call getlocmt (0, ik, 1, nstfv, locmt0)
+!      Call getlocmt (iq, ikq, 1, nstfv, locmt)
+      Wite (unitout,'("first call to getlocmt")')
       Call getlocmt (0, ik, 1, nstfv, locmt0)
+      Write (unitout,'("second call to getlocmt")')
       Call getlocmt (iq, ikq, 1, nstfv, locmt)
 !
       Call cpu_time (cpu0)
