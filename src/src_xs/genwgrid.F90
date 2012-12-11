@@ -11,7 +11,33 @@ Module m_genwgrid
 Contains
 !
 !
+!BOP
+! !ROUTINE: genwgrid
+! !INTERFACE:
       Subroutine genwgrid (n, intv, timag, brd, w_real, w_cmplx)
+! !INPUT/OUTPUT PARAMETERS:
+!   n       : integer, number of grid points for the output grid.
+!   intv    : real vector. [intv(1),intv(2)] is the energy range for the output grid (i.e. input%xs%energywindow%intv).
+!   timag   : boolean. True if analytic continuation (i.e. input%xs%tddft%acont) is wanted
+!   brd     : broadening. I.e. input%xs%broad
+! !DESCRIPTION:
+!   On execution, either array w\_real(j) or w\_cmplx(j) is set to a frequency grid
+!   defined as follows:
+!   w\_real(j)=d*(j-1) + intv(1); j=1,n
+!   w\_real(1)=intv(1)
+!   w\_real(n)=intv(2)-d
+!   where d=[intv(2)-intv(1)]/n
+!
+!   if timag=True
+!   w\_cmplx(j)=i*w\_real(j) + i*brd; j=1,n
+!
+!   if timag=False
+!   w\_cmplx(j)=w\_real(j) + i*brd; j=1,n
+!
+! !REVISION HISTORY:
+!   Description Dec 2012 (S. Rigamonti)
+!EOP
+!BOC
          Implicit None
     ! arguments
          Integer, Intent (In) :: n
