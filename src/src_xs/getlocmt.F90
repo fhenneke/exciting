@@ -30,13 +30,13 @@ Contains
          Real (8), External :: r3dist
          err = 0
     ! check band range
-         If ((isti .Lt. 1) .Or. (istf .Gt. nstfv) .Or. (istf .Le. &
+         If ((isti .Lt. 1) .Or. (istf .Gt. nstsv) .Or. (istf .Le. &
         & isti)) Then
             Write (unitout,*)
             Write (unitout, '("Error(getlocmt): inconsistent limits for&
            & bands:")')
             Write (unitout, '(" band limits  : ", 2i6)') isti, istf
-            Write (unitout, '(" maximum value: ", i6)') nstfv
+            Write (unitout, '(" maximum value: ", i6)') nstsv
             Write (unitout,*)
             Call flushifc (unitout)
             err = err + 1
