@@ -191,14 +191,14 @@ Subroutine xslinopt (iq)
            ! end loop over optical components
             End Do
          End Do
-        If (tq0) Then
+!        If (tq0) Then
             Call genfilname (basename='MOKE', asc=.False., &
             & bzsampl=bzsampl, acont=input%xs%tddft%acont, nar= .Not. &
             & input%xs%tddft%aresdf, tord=input%xs%tddft%torddf, nlf=(m == 1), &
             & fxctypestr=input%xs%tddft%fxctype, tq0=tq0, iqmt=iq, filnam=fnmoke)
             Call genmoke (input%xs%energywindow%points,wplot,sigma2, moke)
             Call writemoke (iq, wplot, moke, trim(fnmoke))
-        End If
+!        End If
       End Do ! m
   ! deallocate
       Deallocate (mdf, mdf1, mdf2, w, wr, wplot, loss, sigma, sigma2, moke)
