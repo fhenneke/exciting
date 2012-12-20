@@ -18,6 +18,7 @@ Contains
       Subroutine gensigma (w, eps, oc, sigma)
          Use mod_constants, Only: pi, zi
          Use modxs
+         Use modinput
 ! !DESCRIPTION:
 !   Calculation of conductivity tensor (sigma) follows Eq.1 from
 !   PRB 86, 125139 (2012)
@@ -35,6 +36,9 @@ Contains
     ! local variables
          Character (*), Parameter :: thisnam = 'gensigma'
          Real (8) :: delt
+         Real (8) :: wp,gd
+         wp = 0.275619816d0
+         gd = 0.02d0
          If (any(shape(eps) .Ne. shape(sigma))) Then
             Write (unitout, '(a)') 'Error(' // thisnam // '): input and&
            & output arrays have diffenrent shape'
@@ -45,7 +49,11 @@ Contains
          If (oc(1) .Eq. oc(2)) delt = 1.d0
          sigma (:) = aimag (eps(:)) * w (:) / (4.d0*pi)
          sigma (:) = sigma (:) + zi * &
-        & (-(dble(eps(:))+delt)*w(:)/(4.d0*pi))
+        & (-(dble(eps(:))-delt)*w(:)/(4.d0*pi))
+         If (input%xs%tddft%intraband .And. (oc(1) .Eq. oc(2))) Then
+            write(*,*) "calculating drude term in sigma"
+            sigma (:) = sigma (:) + wp*wp/(4.d0*pi*(gd - zi*w(:)))
+         End If
       End Subroutine gensigma
 !
 End Module m_gensigma
