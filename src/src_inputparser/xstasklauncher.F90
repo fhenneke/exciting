@@ -59,7 +59,8 @@ Subroutine xstasklauncher
          Call xsinit
          Call writeemat
          Call xsfinit
-!
+!        relation between input%xs%tddft%fxctypenumber and string value of
+!        input%xs%tddft%fxctype is in src_inputparser/inputmodules.f90
          If (input%xs%tddft%fxctypenumber .Eq. 7 .Or. &
         & input%xs%tddft%fxctypenumber .Eq. 8) Then
             task = 401

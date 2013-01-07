@@ -20,7 +20,7 @@ Subroutine xsgeneigvec
       Real (8) :: vqlt (3)
       Integer :: iq, qi, qf
       Logical, External :: tqgamma
-  ! initialize universal variables
+  ! initialize universal variables, e.g. nqpt
       Call init0
       Call init1
       Call init2

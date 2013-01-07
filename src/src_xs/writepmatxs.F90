@@ -40,8 +40,8 @@ Subroutine writepmatxs
       fast=.false.
       if (associated(input%properties)) then
         if (associated(input%properties%momentummatrix)) then
-	  if (input%properties%momentummatrix%fastpmat) fast=.true.
-	end if
+	        if (input%properties%momentummatrix%fastpmat) fast=.true.
+	    end if
       end if	
       fast=(task.ne.120).or.((task.eq.120).and.fast)
       ! check if Q-point is Gamma point
