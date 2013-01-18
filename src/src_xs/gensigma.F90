@@ -51,7 +51,7 @@ Contains
          sigma (:) = sigma (:) + zi * &
         & (-(dble(eps(:))-delt)*w(:)/(4.d0*pi))
          If (input%xs%tddft%intraband .And. (oc(1) .Eq. oc(2))) Then
-            write(*,*) "calculating drude term in sigma"
+            write(*,*) "calculating drude term in diagonal component of sigma"
             sigma (:) = sigma (:) + wp*wp/(4.d0*pi*(gd - zi*w(:)))
          End If
       End Subroutine gensigma
