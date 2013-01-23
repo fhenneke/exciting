@@ -104,7 +104,7 @@ Subroutine idfq (iq)
                forall (j=1:m) fxc (j,j) = fxc(j,j) + 1.d0
             end if
          End Select
-     ! loop over longitudinal components for optics
+     ! loop over longitudinal components for optics (q=0)
          Do oct1 = 1, nc
             If (input%xs%dfoffdiag) Then
                octl = 1

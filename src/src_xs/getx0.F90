@@ -36,7 +36,7 @@ Contains
          End If
     ! q=0 but head or wings missing
          If (tp0 .And. (( .Not. present(ch0wg)) .Or. ( .Not. &
-        & present(ch0wg)))) Then
+        & present(ch0hd)))) Then
             Write (*,*) 'Error(' // trim (thisnam) // '): q=0 but head &
            &or wings missing'
             Call terminate
