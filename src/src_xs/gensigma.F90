@@ -24,7 +24,6 @@ Contains
 !   PRB 86, 125139 (2012)
 ! !REVISION HISTORY:
 !   Added description Nov 2012 (S. Rigamonti)
-!   Corrected sign of delt variable in the expression for sigma below Dec 2012 (S. Rigamonti)
 !EOP
 !BOC
          Implicit None
@@ -47,9 +46,10 @@ Contains
     ! optical conductivity
          delt = 0.d0
          If (oc(1) .Eq. oc(2)) delt = 1.d0
-         sigma (:) = aimag (eps(:)) * w (:) / (4.d0*pi)
-         sigma (:) = sigma (:) + zi * &
-        & (-(dble(eps(:))-delt)*w(:)/(4.d0*pi))
+         sigma(:) = -zi * w(:) ( eps(:) - delt ) / (4.d0*pi)
+!         sigma (:) = aimag (eps(:)) * w (:) / (4.d0*pi)
+!         sigma (:) = sigma (:) + zi * &
+!        & (-(dble(eps(:))-delt)*w(:)/(4.d0*pi))
          If (input%xs%tddft%intraband .And. (oc(1) .Eq. oc(2))) Then
             write(*,*) "calculating drude term in diagonal component of sigma"
             sigma (:) = sigma (:) + wp*wp/(4.d0*pi*(gd - zi*w(:)))
