@@ -44,9 +44,9 @@ Contains
             Call terminate
          End If
     ! optical conductivity
-         delt = 0.d0
+         delt = 0.0d0
          If (oc(1) .Eq. oc(2)) delt = 1.d0
-         sigma(:) = -zi * w(:) ( eps(:) - delt ) / (4.d0*pi)
+         sigma (:) = -zi * w(:) * (eps(:) - delt) / (4.d0*pi)
 !         sigma (:) = aimag (eps(:)) * w (:) / (4.d0*pi)
 !         sigma (:) = sigma (:) + zi * &
 !        & (-(dble(eps(:))-delt)*w(:)/(4.d0*pi))
