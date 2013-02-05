@@ -91,18 +91,18 @@ Subroutine dielectric
          If (input%properties%dielectric%intraband) f (:, :) = 0.d0
 ! loop over non-reduced k-points
          Do ik = 1, nkptnr
-! equivalent reduced k-point
+            ! equivalent reduced k-point
             jk = ikmap (ivknr(1, ik), ivknr(2, ik), ivknr(3, ik))
-! read momentum matrix elements from direct-access file
+            ! read momentum matrix elements from direct-access file
             Read (50, Rec=jk) pmat
-! valance states
+            ! valance states
             Do ist = 1, nstsv
                If (evalsv(ist, jk) .Lt. efermi) Then
-! conduction states
+                  ! conduction states
                   Do jst = 1, nstsv
                      If (evalsv(jst, jk) .Gt. efermi) Then
-! rotate the matrix elements from the reduced to non-reduced k-point
-! (note that the inverse operation is used)
+                        ! rotate the matrix elements from the reduced to non-reduced k-point
+                        ! (note that the inverse operation is used)
                         v1 (:) = dble (pmat(:, ist, jst))
                         Call r3mv (symlatc(:, :, lspl(ik)), v1, v2)
                         v1 (:) = aimag (pmat(:, ist, jst))
@@ -110,14 +110,16 @@ Subroutine dielectric
                         zv (:) = cmplx (v2(:), v3(:), 8)
                         zt1 = occmax * zv (i) * conjg (zv(j))
                         eji = evalsv (jst, jk) - evalsv (ist, jk) + &
-                       & input%properties%dielectric%scissor
+                             & input%properties%dielectric%scissor
                         If (input%properties%dielectric%usegdft) eji = eji + delta (jst, &
-                       & ist, jk)
-                        t1 = 1.d0 / (eji+input%groundstate%swidth)
-                        Do iw = 1, input%properties%dos%nwdos
-                           sigma (iw) = sigma (iw) + t1 * (zt1/(w(iw)-&
-                          & eji+eta)+conjg(zt1)/(w(iw)+eji+eta))
-                        End Do
+                             & ist, jk)
+                        If (abs(eji).gt.1.d-8) then
+                           t1=occsv(ist,jk)*(1.d0-occsv(jst,jk)/occmax)/eji
+                           Do iw = 1, input%properties%dos%nwdos
+                              sigma (iw) = sigma (iw) + t1 * (zt1/(w(iw)-&
+                                   & eji+eta)+conjg(zt1)/(w(iw)+eji+eta))
+                           End Do
+                     End If
                      End If
                   End Do
                End If
