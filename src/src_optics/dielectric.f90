@@ -118,13 +118,13 @@ Subroutine dielectric
                            Do iw = 1, input%properties%dos%nwdos
                               sigma (iw) = sigma (iw) + t1 * (zt1/(w(iw)-&
                                    & eji+eta)+conjg(zt1)/(w(iw)+eji+eta))
-                           End Do
+                           End Do !iw
+                        End If
                      End If
-                     End If
-                  End Do
+                  End Do !jst
                End If
-            End Do
-         End Do
+            End Do !ist
+         End Do !ik
          zt1 = zi / (omega*dble(nkptnr))
          sigma (:) = zt1 * sigma (:)
 ! intraband contribution
