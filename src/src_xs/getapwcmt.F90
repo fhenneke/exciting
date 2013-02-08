@@ -30,7 +30,7 @@ Contains
          Real (8), External :: r3dist
          err = 0
     ! check band range
-         If ((isti .Lt. 1) .Or. (istf .Gt. nstfv) .Or. (istf .Le. &
+         If ((isti .Lt. 1) .Or. (istf .Gt. nstsv) .Or. (istf .Le. &
         & isti)) Then
             Write (unitout,*)
             Write (unitout, '("Error(getapwcmt): inconsistent limits fo&
