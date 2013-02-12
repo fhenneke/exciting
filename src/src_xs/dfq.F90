@@ -477,15 +477,15 @@ use ioarray
                           & ist1, ist2) * conjg (pmou(oct2, ist1, &
                           & ist2)) + wuoh (iw) * pmuo (oct1, ist2, &
                           & ist1) * conjg (pmuo(oct2, ist2, ist1))
-                        End Do
-                     End Do
+                        End Do ! oct2
+                     End Do ! oct1
                   End If
-               End Do
+               End Do ! iw
                Call cpu_time (cpu0)
                cpuupd = cpuupd + cpu0 - cpu1
            ! end loop over states combinations
-            End Do
-         End Do
+            End Do ! ist2
+         End Do ! ist1
          cputot = cpuread + cpuosc + cpuupd
      ! timing information
          Call dftim (iq, ik, trim(fnxtim), cpuread, cpuosc, cpuupd, &
